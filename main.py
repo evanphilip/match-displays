@@ -7,20 +7,22 @@ import numpy
 stream = 0  # "rtsp://rtsp.stream/pattern"
 
 # size of the color pickers
-size = 10
+size = 0.5
+
 
 # open video stream and get geometry
 cap = cv2.VideoCapture(stream)
 height, width, _ = (cap.read()[1]).shape
 
 # color pickers
+size = int(size * height / 6)
 picker1_index = (
-    slice((height // 2 - size), (height // 2 + size)),
-    slice((1 * width // 3 - size), (1 * width // 3 + size)),
+    slice((height // 3 - size), (height // 3 + size)),
+    slice((width // 2 - size), (1 * width // 2 + size)),
 )
 picker2_index = (
-    slice((height // 2 - size), (height // 2 + size)),
-    slice((2 * width // 3 - size), (2 * width // 3 + size)),
+    slice((2 * height // 3 - size), (2 * height // 3 + size)),
+    slice((width // 2 - size), (width // 2 + size)),
 )
 
 # misc initializations
