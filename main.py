@@ -4,10 +4,10 @@ import cv2
 import numpy
 
 # any stream that cv2.VideoCapture can open
-stream = 0  # "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4"
+stream = 0  # "rtsp://rtsp.stream/pattern"
 
 # size of the color pickers
-size = 50
+size = 10
 
 # open video stream and get geometry
 cap = cv2.VideoCapture(stream)
@@ -29,7 +29,7 @@ numpy.set_printoptions(formatter={"float_kind": "{0:.3f}".format})
 
 # loop through video frames
 while cap.isOpened():
-    img = cap.read()[1]
+    img = numpy.float32(cap.read()[1])
 
     # read and process the color patches
     patch1 = img[picker1_index]
@@ -38,24 +38,32 @@ while cap.isOpened():
     total2 = numpy.average(patch2)
     rgb1 = numpy.flip(numpy.average(patch1, axis=(0, 1)))
     rgb2 = numpy.flip(numpy.average(patch2, axis=(0, 1)))
+    hsv1 = numpy.average(cv2.cvtColor(patch1, cv2.COLOR_BGR2HSV_FULL), axis=(0, 1))
+    hsv2 = numpy.average(cv2.cvtColor(patch2, cv2.COLOR_BGR2HSV_FULL), axis=(0, 1))
+    print(hsv1)
 
-    # print color
+    # print RGB
     screen.clear()
-    screen.addstr(0, 1, "R     G     B")
-    screen.addstr(0, 21, "Total")
+    screen.addstr(0, 0, "Press 'q' to quit.")
+    screen.addstr(2, 1, "R     G     B")
+    screen.addstr(2, 21, "Total")
     screen.addstr(
-        1,
+        3,
         0,
         f"{rgb1 / sum(rgb1)}",
     )
-    screen.addstr(1, 21, f"{total1 / 255:.3f}")
+    screen.addstr(3, 21, f"{total1 / 255:.3f}")
     screen.addstr(
-        2,
+        4,
         0,
         f"{rgb2 / sum(rgb2)}",
     )
-    screen.addstr(2, 21, f"{total2 / 255:.3f}")
-    screen.addstr(4, 0, "Press 'q' to quit.")
+    screen.addstr(4, 21, f"{total2 / 255:.3f}")
+
+    # print HSV
+    screen.addstr(6, 1, "H       S     V")
+    screen.addstr(7, 0, f"{hsv1}")
+    screen.addstr(8, 0, f"{hsv2}")
     screen.refresh()
 
     # mark the picking location
